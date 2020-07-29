@@ -35,9 +35,9 @@ then
 			fi
 			;;
 		-A)
-			if [ $# -eq 1 ]
+			if [ $# -eq 1 ] # Valida que no se reciban argumentos
 			then
-				for file in `ls $HOME/.Kuka`
+				for file in `ls $HOME/.Kuka | egrep -v .dir` # Para cada archivo en Kuka ...
 				do
 				# Cargo la direccion del archivo
 				filedir=`cat $HOME/.Kuka/$file.dir`
