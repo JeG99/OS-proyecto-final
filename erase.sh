@@ -10,14 +10,14 @@
 direct=`ls -la | egrep ".Kuka$" `
 if [ $? -ne 0 ] # si no existe, lo creo
 then
-    mkdir 2>/dev/null ~/.Kuka
+    mkdir 2>/dev/null $HOME/.Kuka
 fi
 
 # Validar si existe el directorio
 direct=`ls -la | egrep " .Kuka" `
 if [ $? -ne 0 ] # si no existe, lo creo
 then
-    mkdir 2>/dev/null ~/.Kuka
+    mkdir 2>/dev/null $HOME/.Kuka
 fi
 
 # Validar que haya argumentos
@@ -31,7 +31,7 @@ then
                     then
                         echo "\nERROR: No arguments required.\a"
                     else
-                        ls -l ~/.Kuka | egrep -iv total | tr -s '[ ]' '[#*]' | tr -s '[ ]' '[#*]' | cut -f9 -d#
+                        ls -l $HOME/.Kuka | egrep -iv total | tr -s '[ ]' '[#*]' | tr -s '[ ]' '[#*]' | cut -f9 -d#
                     fi
                     ;;
 
@@ -43,7 +43,7 @@ then
                         echo "\nERROR: No arguments required.\a"
                     else
                         # Borra todos los archivos
-                        Lista=`ls ~/.Kuka`
+                        Lista=`ls $HOME/.Kuka`
 
                         echo "Are you sure you want to delete all files?"
                         read YN
@@ -51,7 +51,7 @@ then
                         then
                             for arch in $Lista
                             do
-                                rm 2>/dev/null ~/.Kuka/$arch
+                                rm 2>/dev/null $HOME/.Kuka/$arch
                             done
                         fi
                     fi
@@ -63,7 +63,7 @@ then
                     then
                         echo "\nERROR: No arguments required.\a"
                     else
-                        Lista=`ls ~/.Kuka`
+                        Lista=`ls $HOME/.Kuka`
 
                         # Procesar la lista
                         for arch in $Lista
@@ -73,7 +73,7 @@ then
                             read YN
                             if [ $YN = "Y" ]
                             then
-                                rm  ~/.Kuka/$arch
+                                rm  $HOME/.Kuka/$arch
                             fi
                         done
                     fi
@@ -87,9 +87,9 @@ then
                         # Checar que exista el archivo
                         if test -f $2
                         then
-                                mv $2 ~/.Kuka/.
+                                mv $2 $HOME/.Kuka/.
                                 currpath=`pwd` 
-                                echo $currpath > ~/.Kuka/$2.dir
+                                echo $currpath > $HOME/.Kuka/$2.dir
                         else
                                 echo "\nError: the file \"$2\" does not exist.\a"
                         fi
