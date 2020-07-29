@@ -52,6 +52,7 @@ then
                             for arch in $Lista
                             do
                                 rm 2>/dev/null $HOME/.Kuka/$arch
+                                rm $HOME/.Kuka/.$arch.dir
                             done
                         fi
                     fi
@@ -74,6 +75,7 @@ then
                             if [ $YN = "Y" ]
                             then
                                 rm  $HOME/.Kuka/$arch
+                                rm $HOME/.Kuka/.$arch.dir
                             fi
                         done
                     fi
@@ -89,7 +91,7 @@ then
                         then
                                 mv $2 $HOME/.Kuka/.
                                 currpath=`pwd` 
-                                echo $currpath > $HOME/.Kuka/$2.dir
+                                echo $currpath > $HOME/.Kuka/.$2.dir
                         else
                                 echo "\nError: the file \"$2\" does not exist.\a"
                         fi
