@@ -88,6 +88,8 @@ then
                         if test -f $2
                         then
                                 mv $2 ~/.Kuka/.
+                                currpath=`pwd` 
+                                echo $currpath > ~/.Kuka/$2.dir
                         else
                                 echo "\nError: the file \"$2\" does not exist.\a"
                         fi
