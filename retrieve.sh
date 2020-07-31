@@ -10,51 +10,64 @@
 kuka=`ls -la | egrep ".Kuka"`
 if [ $? -ne 0 ] # Si el directorio oculto no existe...
 then
-	mkdir $HOME/.Kuka # ... es creado
+        mkdir $HOME/.Kuka # ... es creado
+        # Crea archivo donde se guardan los directorios
+        touch $HOME/.Kuka/.Rutas
 fi
 
 # Validar que se reciben de 1 a 2 argumentos
-if [ $# -gt 0 -o $# -lt 2 ]
+if [ $# -gt 0 -a $# -lt 3 ]
 then
-	case $1 in 
-		-F) # Recupera un archivo
-			if [ $# -eq 2 ] # Valida que se reciba un archivo como argumento
-			then
-				# Cargo la direccion del archivo
-				filedir=`cat $HOME/.Kuka/.$2.dir`
-				# Verifico que la direccion exista
-				directory=`ls -la | egrep $filedir`
-				if [ $? -ne 0 ] # Si la direccion no existe ...
-				then
-					mkdir -p $filedir # ... es creada
-				fi
-				mv $HOME/.Kuka/$2 $filedir # Recuperar el archivo
-				rm $HOME/.Kuka/.$2.dir # Eliminar la referencia a la direccion
-			else
-				echo "\nUsage:\n    -F [file]\n        Restores a file to its former directory\a\n"
-			fi
-			;;
-		-A)
-			if [ $# -eq 1 ] # Valida que no se reciban argumentos
-			then
-				for file in `ls $HOME/.Kuka | egrep -v .dir` # Para cada archivo en Kuka ...
-				do
-				# Cargo la direccion del archivo
-				filedir=`cat $HOME/.Kuka/.$file.dir`
-				# Verifico que la direccion exista
-				directory=`ls -la | egrep $filedir`
-				if [ $? -ne 0 ] # Si la direccion no existe ...
-				then
-					mkdir -p $filedir # ... es creada
-				fi
-				mv $HOME/.Kuka/$file $filedir # Recuperar el archivo
-				rm $HOME/.Kuka/.$file.dir # Eliminar la referencia a la direccion
-				done
-			else
-				echo "\nUsage:\n    -A\n        Restores all erased files to their former directories\a\n"
-			fi
-			;;
-	esac
+        case $1 in
+                -F) # Recupera un archivo
+                        if [ $# -eq 2 ] # Valida que se reciba un argumento
+                        then
+                                if test -f $HOME/.Kuka/$2
+                                then
+                                        # Recupero el archivo
+                                        mv $HOME/.Kuka/$2 $(cat ~/.Kuka/.Rutas | egrep "/$2$")
+                                        # Archivo temporal de Rutas
+                                        cp ~/.Kuka/.Rutas ~/.Kuka/.Temp
+                                        # Vaciar Rutas 
+                                        > ~/.Kuka/.Rutas
+                                        # Procesar temporal de Rutas 
+                                        for dir in `cat ~/.Kuka/.Temp  | egrep -v "/$2$"`
+                                        do
+                                                # Vaciar todas las rutas en un nuevo .Rutas excepto la del archivo recuperado
+                                                echo $dir >> ~/.Kuka/.Rutas
+                                        done
+                                        # Eliminar el temporal
+                                        rm ~/.Kuka/.Temp
+                                else
+                                        echo "\nError: the file $2 does not exist."
+                                fi
+                        else
+                                echo "\nError: The script must receive the name of the file to recover"
+                        fi
+                        ;;
+                -A)
+                        if [ $# -eq 1 ] # Valida que no se reciban argumentos
+                        then
+                                for file in `ls $HOME/.Kuka | egrep -v .Rutas` # Para cada archivo en Kuka ...
+                                do
+                                        mv $HOME/.Kuka/$file $(cat ~/.Kuka/.Rutas | egrep "/$file$")
+                                        # Eliminar directorio del archivo Rutas
+                                        cp ~/.Kuka/.Rutas ~/.Kuka/.Temp
+                                        > ~/.Kuka/.Rutas
+                                        for dir in `cat ~/.Kuka/.Temp  | egrep -v "/$file$"`
+                                        do
+                                            echo $dir >> ~/.Kuka/.Rutas
+                                        done
+                                        rm ~/.Kuka/.Temp
+                                done
+                        else
+                                echo "\nError: This flag receives no arguments !!!"
+                        fi
+                        ;;
+                *)
+                        echo "\nError: The flag used is not valid in this script !!!"
+                        ;;
+        esac
 else
-	echo "\nERROR: Wrong number of arguments.\a" 
+        echo "\nERROR: Wrong number of arguments.\a"
 fi
