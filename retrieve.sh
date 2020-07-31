@@ -7,7 +7,7 @@
 #################################################
 
 # Validar que el directorio oculto Kuka existe
-kuka=`ls -la | egrep ".Kuka"`
+kuka=`ls -la ~ | egrep ".Kuka$"`
 if [ $? -ne 0 ] # Si el directorio oculto no existe...
 then
         mkdir $HOME/.Kuka # ... es creado
@@ -28,9 +28,9 @@ then
                                         mv $HOME/.Kuka/$2 $(cat ~/.Kuka/.Rutas | egrep "/$2$")
                                         # Archivo temporal de Rutas
                                         cp ~/.Kuka/.Rutas ~/.Kuka/.Temp
-                                        # Vaciar Rutas 
+                                        # Vaciar Rutas
                                         > ~/.Kuka/.Rutas
-                                        # Procesar temporal de Rutas 
+                                        # Procesar temporal de Rutas
                                         for dir in `cat ~/.Kuka/.Temp  | egrep -v "/$2$"`
                                         do
                                                 # Vaciar todas las rutas en un nuevo .Rutas excepto la del archivo recuperado
@@ -48,18 +48,12 @@ then
                 -A)
                         if [ $# -eq 1 ] # Valida que no se reciban argumentos
                         then
-                                for file in `ls $HOME/.Kuka | egrep -v .Rutas` # Para cada archivo en Kuka ...
+                                for file in `ls -a $HOME/.Kuka | egrep -v ".Rutas" | egrep -v "\.$"` # Para cada archivo en Kuka ...
                                 do
                                         mv $HOME/.Kuka/$file $(cat ~/.Kuka/.Rutas | egrep "/$file$")
-                                        # Eliminar directorio del archivo Rutas
-                                        cp ~/.Kuka/.Rutas ~/.Kuka/.Temp
-                                        > ~/.Kuka/.Rutas
-                                        for dir in `cat ~/.Kuka/.Temp  | egrep -v "/$file$"`
-                                        do
-                                            echo $dir >> ~/.Kuka/.Rutas
-                                        done
-                                        rm ~/.Kuka/.Temp
                                 done
+                                # Vaciar archivo Rutas
+                                > ~/.Kuka/.Rutas
                         else
                                 echo "\nError: This flag receives no arguments !!!"
                         fi

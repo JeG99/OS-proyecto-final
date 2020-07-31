@@ -2,12 +2,12 @@
 #################################################
 # ITESM                                         #
 # Actividad Final                               #
-# Autores: Adriana Fernández                     #
-#          José Elías                             #
+# Autores: Adriana Fernández                    #
+#          José Elías                           #
 #################################################
 
 # Validar si existe el directorio
-direct=`ls -la | egrep ".Kuka$" `
+direct=`ls -la ~ | egrep ".Kuka$"`
 if [ $? -ne 0 ] # si no existe, lo creo
 then
     mkdir 2>/dev/null ~/.Kuka
@@ -26,7 +26,7 @@ then
                     then
                         echo "\nERROR: No arguments required.\a"
                     else
-                        ls -la $HOME/.Kuka | egrep -iv total | egrep -v ".Rutas" | tr -s '[ ]' '[#*]' | tr $
+                        ls -la ~/.Kuka | egrep -iv total | egrep -v ".Rutas^" | tr -s '[ ]' '[#*]' | tr -s '[ ]' '[#*]' | cut -f9 -d# | egrep -v "\.$"
                     fi
                     ;;
 
