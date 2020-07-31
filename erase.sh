@@ -2,22 +2,17 @@
 #################################################
 # ITESM                                         #
 # Actividad Final                               #
-# Autores: Adriana Fernández                    #
-#          José Elías                           #
+# Autores: Adriana Fernández                     #
+#          José Elías                             #
 #################################################
 
 # Validar si existe el directorio
 direct=`ls -la | egrep ".Kuka$" `
 if [ $? -ne 0 ] # si no existe, lo creo
 then
-    mkdir 2>/dev/null $HOME/.Kuka
-fi
-
-# Validar si existe el directorio
-direct=`ls -la | egrep " .Kuka" `
-if [ $? -ne 0 ] # si no existe, lo creo
-then
-    mkdir 2>/dev/null $HOME/.Kuka
+    mkdir 2>/dev/null ~/.Kuka
+    # Crea archivo donde se guardan los directorios
+    touch ~/.Kuka/.Rutas
 fi
 
 # Validar que haya argumentos
@@ -31,9 +26,10 @@ then
                     then
                         echo "\nERROR: No arguments required.\a"
                     else
-                        ls -l $HOME/.Kuka | egrep -iv total | tr -s '[ ]' '[#*]' | tr -s '[ ]' '[#*]' | cut -f9 -d#
+                        ls -la $HOME/.Kuka | egrep -iv total | egrep -v ".Rutas" | tr -s '[ ]' '[#*]' | tr $
                     fi
                     ;;
+
 
 
                 -D) # Borra todos los archivos del directorio Kuka
@@ -43,7 +39,7 @@ then
                         echo "\nERROR: No arguments required.\a"
                     else
                         # Borra todos los archivos
-                        Lista=`ls $HOME/.Kuka`
+                        Lista=`ls -a $HOME/.Kuka | egrep -v ".Rutas" | egrep -v "\.$"`
 
                         echo "Are you sure you want to delete all files?"
                         read YN
@@ -52,11 +48,13 @@ then
                             for arch in $Lista
                             do
                                 rm 2>/dev/null $HOME/.Kuka/$arch
-                                rm $HOME/.Kuka/.$arch.dir
                             done
+                            # Borrar contenido de archivo Rutas
+                            > ~/.Kuka/.Rutas
                         fi
                     fi
                     ;;
+
 
                 -I) # Para cada archivo, pregunta si lo quiere borrar
                     # Verificar que no haya más argumentos
@@ -64,8 +62,7 @@ then
                     then
                         echo "\nERROR: No arguments required.\a"
                     else
-                        Lista=`ls $HOME/.Kuka`
-
+                        Lista=`ls -a $HOME/.Kuka | egrep -v ".Rutas" | egrep -v "\.$"`
                         # Procesar la lista
                         for arch in $Lista
                         do
@@ -75,7 +72,14 @@ then
                             if [ $YN = "Y" ]
                             then
                                 rm  $HOME/.Kuka/$arch
-                                rm $HOME/.Kuka/.$arch.dir
+                                # Eliminar directorio del archivo Rutas
+                                cp ~/.Kuka/.Rutas ~/.Kuka/.Temp
+                                > ~/.Kuka/.Rutas
+                                for dir in `cat ~/.Kuka/.Temp  | egrep -v "/$arch$"`
+                                do
+                                    echo $dir >> ~/.Kuka/.Rutas
+                                done
+                                rm ~/.Kuka/.Temp
                             fi
                         done
                     fi
@@ -89,9 +93,9 @@ then
                         # Checar que exista el archivo
                         if test -f $2
                         then
+                                filePath=`echo "$(cd "$(dirname "$2")"; pwd -P)/$(basename "$2")"`
+                                echo $filePath >> ~/.Kuka/.Rutas
                                 mv $2 $HOME/.Kuka/.
-                                currpath=`pwd` 
-                                echo $currpath > $HOME/.Kuka/.$2.dir
                         else
                                 echo "\nError: the file \"$2\" does not exist.\a"
                         fi
